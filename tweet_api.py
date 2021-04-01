@@ -1,7 +1,9 @@
-import settings,os
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
 from selenium.webdriver import Chrome, ChromeOptions
 from webdriver_manager.chrome import ChromeDriverManager
-import pandas as pd
+import dpandas as pd
 import tweepy
 import time
 
@@ -51,7 +53,6 @@ class Stock_Check:
 		
 		item_csv.to_csv(file_name)
 
-	# 登録された商品をチェックしてツイート。tweet_mode : all-全て、 instock-入庫、 shortage-欠品
 	def check_stock( self,api, tweet_mode="instock_shortage" ):
 		driver = set_driver()
 		for i in self.item_list:
@@ -84,11 +85,15 @@ class Stock_Check:
 
 
 def main():
-	# 環境変数をsetting.env > settings.py から取得
-	API_KEY = settings.API_KEY
-	API_SECRET = settings.API_SECRET
-	ACCESS_TOKEN = settings.ACCESS_TOKEN
-	ACCESS_SECRET = settings.ACCESS_SECRET
+	# 環境変数をsetting.env から取得
+	load_dotenv(verbose=True)
+	dotenv_path = join(dirname(__file__), 'setting.env')
+	load_dotenv(dotenv_path)
+
+	API_KEY = os.environ.get("API_key")
+	API_SECRET = os.environ.get("API_secret")
+	ACCESS_TOKEN = os.environ.get("Access_token")
+	ACCESS_SECRET = os.environ.get("Access_secret")
 
 	auth=tweepy.OAuthHandler(API_KEY,API_SECRET)
 	auth.set_access_token(ACCESS_TOKEN,ACCESS_SECRET)
